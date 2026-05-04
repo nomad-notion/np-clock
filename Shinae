@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watercolor Clock Widget</title>
     <style>
-
+        /* 기본 (라이트 모드) 컬러: 싱그러운 연두색 수채화 */
         :root {
             --text-main: #202b22;
             --text-sub: #445947;
@@ -13,7 +13,7 @@
             --blob-2: #c0e6c3;
         }
 
-      
+        /* 다크 모드 컬러: 차분하고 깊은 숲색 수채화 */
         @media (prefers-color-scheme: dark) {
             :root {
                 --text-main: #e6f0e7;
@@ -33,7 +33,7 @@
             background-color: transparent;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
-            user-select: none; 
+            user-select: none; /* 드래그 방지 */
         }
 
         .widget-container {
@@ -46,7 +46,7 @@
             height: 300px;
         }
 
-      
+        /* --- 수채화 배경 효과 (CSS Blob) --- */
         .watercolor-bg {
             position: absolute;
             top: 50%;
@@ -57,7 +57,7 @@
             z-index: -1;
         }
 
-   
+        /* 두 개의 유기적인 모양을 겹치고 블러처리하여 물감 번짐 표현 */
         .blob {
             position: absolute;
             top: 0;
@@ -65,7 +65,7 @@
             width: 100%;
             height: 100%;
             opacity: 0.85;
-            filter: blur(12px); /* 물감 번지는 효과 */
+            filter: blur(12px);
         }
 
         .blob-1 {
@@ -80,7 +80,7 @@
             transform: rotate(-25deg) scale(0.95);
         }
 
-       
+        /* --- 텍스트 스타일 --- */
         .greeting {
             font-size: 1rem;
             color: var(--text-sub);
@@ -116,50 +116,37 @@
             <div class="blob blob-2"></div>
         </div>
         
+        <!-- 고정된 인삿말 -->
+        <div class="greeting">Welcome to my workspace</div>
+        
         <!-- 시계 정보 -->
-        <div class="greeting" id="greeting">Good Day!</div>
         <div class="time" id="time">00:00</div>
-        <div class="date" id="date">00-00-0000</div>
+        <div class="date" id="date">0000-00-00</div>
     </div>
 
     <script>
-        // URL에서 이름 가져오기 (기본값: Friend)
-        const urlParams = new URLSearchParams(window.location.search);
-        let userName = urlParams.get('name') || 'Sandra'; 
-
         function updateClock() {
             const now = new Date();
-            const h = now.getHours();
-            const m = now.getMinutes();
             
             // 1. 시간 표시 (HH:MM 형식)
+            const h = now.getHours();
+            const m = now.getMinutes();
             const hours = String(h).padStart(2, '0');
             const minutes = String(m).padStart(2, '0');
             document.getElementById('time').innerText = `${hours}:${minutes}`;
 
-            // 2. 날짜 표시 (DD-MM-YYYY 형식)
-            const d = String(now.getDate()).padStart(2, '0');
-            const mo = String(now.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+            // 2. 날짜 표시 (YYYY-MM-DD 형식으로 변경)
             const y = now.getFullYear();
-            document.getElementById('date').innerText = `${d}-${mo}-${y}`;
-
-            // 3. 인삿말 로직 (시간대별)
-            let greet = "Good Night"; // 기본 (밤 9시 ~ 새벽 5시)
-            if (h >= 5 && h < 12) {
-                greet = "Good Morning";
-            } else if (h >= 12 && h < 17) {
-                greet = "Good Afternoon";
-            } else if (h >= 17 && h < 21) {
-                greet = "Good Evening";
-            }
+            const mo = String(now.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+            const d = String(now.getDate()).padStart(2, '0');
             
-            
-            document.getElementById('greeting').innerText = `${greet}, ${userName}!`;
+            // 템플릿 리터럴 순서를 연-월-일로 변경
+            document.getElementById('date').innerText = `${y}-${mo}-${d}`;
         }
 
-    
+        // 1초마다 업데이트
         setInterval(updateClock, 1000);
-        updateClock(); 
+        updateClock(); // 초기 즉시 실행
     </script>
 </body>
 </html>
