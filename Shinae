@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watercolor Clock Widget</title>
+    <style>
+
+        :root {
+            --text-main: #202b22;
+            --text-sub: #445947;
+            --blob-1: #d1ebd2;
+            --blob-2: #c0e6c3;
+        }
+
+      
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-main: #e6f0e7;
+                --text-sub: #aabfab;
+                --blob-1: #1e3622;
+                --blob-2: #244229;
+            }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            user-select: none; 
+        }
+
+        .widget-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 300px;
+            height: 300px;
+        }
+
+      
+        .watercolor-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px;
+            height: 240px;
+            z-index: -1;
+        }
+
+   
+        .blob {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.85;
+            filter: blur(12px); /* 물감 번지는 효과 */
+        }
+
+        .blob-1 {
+            background-color: var(--blob-1);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            transform: rotate(15deg);
+        }
+
+        .blob-2 {
+            background-color: var(--blob-2);
+            border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%;
+            transform: rotate(-25deg) scale(0.95);
+        }
+
+       
+        .greeting {
+            font-size: 1rem;
+            color: var(--text-sub);
+            margin-bottom: 5px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        .time {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1;
+            letter-spacing: 0.02em;
+            margin-bottom: 8px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .date {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="widget-container">
+        <!-- 수채화 물감 효과 -->
+        <div class="watercolor-bg">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+        </div>
+        
+        <!-- 시계 정보 -->
+        <div class="greeting" id="greeting">Good Day!</div>
+        <div class="time" id="time">00:00</div>
+        <div class="date" id="date">00-00-0000</div>
+    </div>
+
+    <script>
+        // URL에서 이름 가져오기 (기본값: Friend)
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('name') || 'Sandra'; 
+
+        function updateClock() {
+            const now = new Date();
+            const h = now.getHours();
+            const m = now.getMinutes();
+            
+            // 1. 시간 표시 (HH:MM 형식)
+            const hours = String(h).padStart(2, '0');
+            const minutes = String(m).padStart(2, '0');
+            document.getElementById('time').innerText = `${hours}:${minutes}`;
+
+            // 2. 날짜 표시 (DD-MM-YYYY 형식)
+            const d = String(now.getDate()).padStart(2, '0');
+            const mo = String(now.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+            const y = now.getFullYear();
+            document.getElementById('date').innerText = `${d}-${mo}-${y}`;
+
+            // 3. 인삿말 로직 (시간대별)
+            let greet = "Good Night"; // 기본 (밤 9시 ~ 새벽 5시)
+            if (h >= 5 && h < 12) {
+                greet = "Good Morning";
+            } else if (h >= 12 && h < 17) {
+                greet = "Good Afternoon";
+            } else if (h >= 17 && h < 21) {
+                greet = "Good Evening";
+            }
+            
+            
+            document.getElementById('greeting').innerText = `${greet}, ${userName}!`;
+        }
+
+    
+        setInterval(updateClock, 1000);
+        updateClock(); 
+    </script>
+</body>
+</html>
