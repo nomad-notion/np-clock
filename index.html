@@ -5,21 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watercolor Clock Widget</title>
     <style>
-        /* 기본 (라이트 모드) 컬러: 싱그러운 연두색 수채화 */
-   :root {
-            --text-main: #4a3f3a; /* 따뜻한 다크 브라운 */
-            --text-sub: #8c7b75;  /* 부드러운 코코아 회색 */
-            --blob-1: #fff0e8;    /* 뽀얀 살구색 */
-            --blob-2: #faddce;    /* 은은한 피치색 */
+        /* 라이트 모드 컬러: 코지 베이지 (노션 템플릿 맞춤) */
+        :root {
+            --text-main: #37352f;
+            --text-sub: #787774;
+            --blob-1: #faf3e6;
+            --blob-2: #f2e4c9;
+            --watermark: #e0dfdc; /* 워터마크(서명) 색상: 아주 연한 회색 */
         }
 
-        /* 다크 모드 컬러: 차분하고 깊은 숲색 수채화 */
+        /* 다크 모드 컬러 */
         @media (prefers-color-scheme: dark) {
             :root {
                 --text-main: #e6f0e7;
                 --text-sub: #aabfab;
-                --blob-1: #1e3622;
-                --blob-2: #244229;
+                --blob-1: #3b3a37; /* 다크모드에 맞는 딥 그레이지 */
+                --blob-2: #2f2e2c;
+                --watermark: #4a4947;
             }
         }
 
@@ -33,7 +35,7 @@
             background-color: transparent;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
-            user-select: none; /* 드래그 방지 */
+            user-select: none;
         }
 
         .widget-container {
@@ -46,7 +48,7 @@
             height: 300px;
         }
 
-        /* --- 수채화 배경 효과 (CSS Blob) --- */
+        /* 수채화 배경 효과 */
         .watercolor-bg {
             position: absolute;
             top: 50%;
@@ -57,7 +59,6 @@
             z-index: -1;
         }
 
-        /* 두 개의 유기적인 모양을 겹치고 블러처리하여 물감 번짐 표현 */
         .blob {
             position: absolute;
             top: 0;
@@ -80,7 +81,7 @@
             transform: rotate(-25deg) scale(0.95);
         }
 
-        /* --- 텍스트 스타일 --- */
+        /* 텍스트 스타일 */
         .greeting {
             font-size: 1rem;
             color: var(--text-sub);
@@ -105,6 +106,18 @@
             font-weight: 500;
             letter-spacing: 0.05em;
         }
+
+        /* 하단 서명 (워터마크) 스타일 */
+        .watermark {
+            position: absolute;
+            bottom: 20px; /* 맨 아래에서 살짝 위로 */
+            font-size: 0.7rem;
+            color: var(--watermark);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: lowercase; /* 소문자로 통일하여 미니멀함 강조 */
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -122,31 +135,32 @@
         <!-- 시계 정보 -->
         <div class="time" id="time">00:00</div>
         <div class="date" id="date">0000-00-00</div>
+
+        <!-- 내 위젯 표시 (서명) -->
+        <div class="watermark">nomadplanner</div>
     </div>
 
     <script>
         function updateClock() {
             const now = new Date();
             
-            // 1. 시간 표시 (HH:MM 형식)
+            // 1. 시간 표시
             const h = now.getHours();
             const m = now.getMinutes();
             const hours = String(h).padStart(2, '0');
             const minutes = String(m).padStart(2, '0');
             document.getElementById('time').innerText = `${hours}:${minutes}`;
 
-            // 2. 날짜 표시 (YYYY-MM-DD 형식으로 변경)
+            // 2. 날짜 표시
             const y = now.getFullYear();
-            const mo = String(now.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+            const mo = String(now.getMonth() + 1).padStart(2, '0');
             const d = String(now.getDate()).padStart(2, '0');
-            
-            // 템플릿 리터럴 순서를 연-월-일로 변경
             document.getElementById('date').innerText = `${y}/${mo}/${d}`;
         }
 
         // 1초마다 업데이트
         setInterval(updateClock, 1000);
-        updateClock(); // 초기 즉시 실행
+        updateClock();
     </script>
 </body>
 </html>
